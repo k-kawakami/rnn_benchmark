@@ -61,7 +61,7 @@ CUDNN VERSION: 6021
 Number CUDA Devices: 1
 Active CUDA Device: GPU: 0
 
-
+Intel(R) Xeon(R) CPU E5-2630 v3 @ 2.40GHz
 ```
 
 - P100
