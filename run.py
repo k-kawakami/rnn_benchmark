@@ -2,15 +2,27 @@
 """GPU Speedtest with RNNLM."""
 
 import argparse
+import sys
+from subprocess import call
 
 from models import RNNLM
 
 import torch
+assert torch.cuda.is_available(), 'CUDA is not available!'
 from torch import optim
+import torch.backends.cudnn as cudnn
+cudnn.benchmark = True
 
 from utils import Corpus
 
-assert torch.cuda.is_available(), 'CUDA is not available!'
+
+print('Python VERSION: {}'.format(sys.version))
+print('pyTorch VERSION: {}'.format(torch.__version__))
+print('CUDA VERSION: {}'.format(call(["nvcc", "--version"])))
+print('CUDNN VERSION: {}'.format(torch.backends.cudnn.version()))
+print('Number CUDA Devices: {}'.format(torch.cuda.device_count()))
+print('Active CUDA Device: GPU: {}'.format(torch.cuda.current_device()))
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-seed', type=int, default=1234)
@@ -30,7 +42,6 @@ parser.add_argument('-epochs', type=int, default=100)
 parser.add_argument('-optimizer', type=str, default='Adam',
                     help='Optimizer Type: SGD, Adagrad, Adadelta, Adam')
 parser.add_argument('-lr', type=float, default=0.0002)
-parser.add_argument('-clip', type=float, default=0.25)
 parser.add_argument('-dropout', type=float, default=0.5)
 parser.add_argument('-batch_size', type=int, default=128)
 parser.add_argument('-seq_len', type=int, default=128)
@@ -58,13 +69,21 @@ model.cuda()
 optimizer = getattr(optim, args.optimizer)(model.parameters(), lr=args.lr)
 
 # Run!
+tr_wps_record = []
+va_wps_record = []
 for epoch in range(args.epochs):
     tr_score, tr_wps = model.run('tr', Xtr, Ytr, args.batch_size, optimizer)
     va_score, va_wps = model.run('va', Xva, Yva, args.batch_size)
+    
+    tr_wps_record.append(tr_wps)
+    va_wps_record.append(va_wps)
+
     model.epoch += 1
     if va_score < model.best_score[2]:
         model.best_score = (epoch, tr_score, va_score)
         torch.save(model, 'rnnlm')
+
+print 'Train {:.3f} wps / Eval: {:.3f}'.format(numpy.mean(tr_wps_record), numpy.mean(va_wps_record))
 
 ## Evaluate
 model = torch.load('rnnlm')

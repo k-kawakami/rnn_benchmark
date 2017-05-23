@@ -29,6 +29,9 @@ class RNNLM(nn.Module):
                                          batch_first=True)
         self.logit = nn.Linear(hid_dim, vocab_size)
 
+        if tied:
+            self.logit.weight = self.proj.weight
+
     def reset_states(self, batch_size):
         weight = next(self.parameters()).data
 
@@ -82,6 +85,7 @@ class RNNLM(nn.Module):
             x = Variable(X[begin:end])
             t = Variable(Y[begin:end])
 
+            ### Start ###
             start = time.time()
             y = self(x)
             loss = L(y, t.view(-1))
@@ -90,7 +94,7 @@ class RNNLM(nn.Module):
                 self.zero_grad()
                 loss.backward()
                 optimizer.step()
-
+            ###  End  ###
             _total_time += time.time() - start
             _total_loss += loss.cpu().data.numpy()[0]
             _total_word += float(numpy.prod(Y[begin:end].size()))
