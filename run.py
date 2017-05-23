@@ -3,9 +3,9 @@
 
 import argparse
 import sys
-from subprocess import call
 
-from models import RNNLM
+import numpy
+from subprocess import call
 
 import torch
 assert torch.cuda.is_available(), 'CUDA is not available!'
@@ -13,6 +13,7 @@ from torch import optim
 import torch.backends.cudnn as cudnn
 cudnn.benchmark = True
 
+from models import RNNLM
 from utils import Corpus
 
 
