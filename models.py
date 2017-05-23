@@ -105,4 +105,4 @@ class RNNLM(nn.Module):
             ])
 
         print
-        return numpy.exp(_total_loss / _total_word), _total_time / _total_word
+        return numpy.exp(_total_loss / _total_word), _total_word / _total_time
