@@ -43,6 +43,11 @@ We ran the model for 10 epochs and report the number of processed words per seco
 - Tesla P100-PCIE-16GB: Train 497,944.387 wps / Eval: 3,692,290.684 wps
 - GeForce GTX TITAN X: Train 354,534.268 wps / Eval: 4,399,055.094 wps
 
+Yeah... looks good. DGX1 is ~10% faster than P100.
+But wait. Why Titan X is the fastest for test time? 
+There might be some bugs. (or CPU performance?)
+Help me!
+
 ### Details
 
 - DGX1
