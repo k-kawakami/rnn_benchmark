@@ -21,17 +21,19 @@ Since we are not trying to establish SoTA results, we used large minibatch size 
 The hyperparameters we used are the following. Note that I have removed gradient clipping which introduce a large amount of overhead.
 
 ```
--rnn LSTM 
--nlayers 1 
--emb_dim 1024 
--hid_dim 1024 
--tied 0 
--epochs 100 
--optimizer Adam 
--lr 0.002 
--dropout 0.5 
--batch_size 128 
--seq_len 128
+-rnn LSTM
+-nlayers 1
+-emb_dim 1024
+-hid_dim 1024
+-tied 1
+-epochs 100
+-optimizer Adam
+-lr 0.002
+-dropout 0.5
+-batch_size 25
+-seq_len 35
+-clip 0.25
+-seed 100 
 ```
 
 ## Results
@@ -47,9 +49,7 @@ Yeah... looks good. DGX1 is ~10% faster than P100.
 
 But wait. Why Titan X is the fastest for test time? 
 
-There might be some bugs. (or CPU performance?)
-
-Help me!
+CPU performance? Bugs?
 
 ### Details
 
