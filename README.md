@@ -18,7 +18,7 @@ The evaluations are done on a standard language modeling dataset, [Wikitext-2](h
 ## Model Configuration
 
 Since we are not trying to establish SoTA results, we used large minibatch size to consume large amount of GPU memory. 
-The hyperparameters we used are the following.
+The hyperparameters we used are the following. Note that I have removed gradient clipping which introduce a large amount of overhead.
 
 ```
 -rnn LSTM 
