@@ -92,11 +92,12 @@ class RNNLM(nn.Module):
             end = begin + batch_size
 
             # Start
-            start = time.time()
             if optimizer:
+                start = time.time()
                 x = Variable(X[begin:end], requires_grad=False)
                 t = Variable(Y[begin:end], requires_grad=False)
             else:
+                start = time.time()
                 x = Variable(X[begin:end], requires_grad=False, volatile=True)
                 t = Variable(Y[begin:end], requires_grad=False, volatile=True)
             y = self(x)
