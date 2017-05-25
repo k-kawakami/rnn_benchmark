@@ -10,6 +10,12 @@ bash download.sh
 CUDA_VISIBLE_DEVICES=0 python run.py -rnn LSTM -nlayers 1 -emb_dim 1024 -hid_dim 1024 -tied 0 -epochs 10 -optimizer Adam -lr 0.0002 -dropout 0.5 -batch_size 128 -seq_len 128 -clip 0.1 -seed 1234 -cudnn
 ```
 
+## For contributors!
+
+Thank you very much for running experiments!
+
+Please provide deviceQuery information and cpuinfo of your machine below.
+
 
 ## Evaluation
 
