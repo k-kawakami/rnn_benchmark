@@ -8,14 +8,14 @@ import numpy
 from subprocess import call
 
 import torch
-assert torch.cuda.is_available(), 'CUDA is not available!'
 from torch import optim
 import torch.backends.cudnn as cudnn
-cudnn.benchmark = True
 
 from models import RNNLM
 from utils import Corpus
 
+cudnn.benchmark = True
+assert torch.cuda.is_available(), 'CUDA is not available!'
 
 print('Python VERSION: {}'.format(sys.version))
 print('pyTorch VERSION: {}'.format(torch.__version__))
@@ -43,6 +43,8 @@ parser.add_argument('-epochs', type=int, default=100)
 parser.add_argument('-optimizer', type=str, default='Adam',
                     help='Optimizer Type: SGD, Adagrad, Adadelta, Adam')
 parser.add_argument('-lr', type=float, default=0.0002)
+parser.add_argument('-clip', type=float, default=0.25,
+                    help='gradient clipping')
 parser.add_argument('-dropout', type=float, default=0.5)
 parser.add_argument('-batch_size', type=int, default=128)
 parser.add_argument('-seq_len', type=int, default=128)
@@ -57,6 +59,9 @@ corpus.build_vocab(args.tr)
 Xtr, Ytr = corpus.load_data(args.tr, args.batch_size, args.seq_len)
 Xva, Yva = corpus.load_data(args.va, args.batch_size, args.seq_len)
 Xte, Yte = corpus.load_data(args.te, args.batch_size, args.seq_len)
+
+print Xtr.size()
+print Xva.size()
 
 # Model
 model = RNNLM(args.rnn,
@@ -73,9 +78,10 @@ optimizer = getattr(optim, args.optimizer)(model.parameters(), lr=args.lr)
 tr_wps_record = []
 va_wps_record = []
 for epoch in range(args.epochs):
-    tr_score, tr_wps = model.run('tr', Xtr, Ytr, args.batch_size, optimizer)
+    tr_score, tr_wps = model.run('tr', Xtr, Ytr, args.batch_size,
+                                 optimizer, args.clip)
     va_score, va_wps = model.run('va', Xva, Yva, args.batch_size)
-    
+    te_score, te_wps = model.run('te', Xte, Yte, args.batch_size)
     tr_wps_record.append(tr_wps)
     va_wps_record.append(va_wps)
 
@@ -84,9 +90,10 @@ for epoch in range(args.epochs):
         model.best_score = (epoch, tr_score, va_score)
         torch.save(model, 'rnnlm')
 
-print 'Train {:.3f} wps / Eval: {:.3f}'.format(numpy.mean(tr_wps_record), numpy.mean(va_wps_record))
+print 'Train {:.3f} wps / Eval: {:.3f}'.format(numpy.mean(tr_wps_record),
+                                               numpy.mean(va_wps_record))
 
-## Evaluate
+# Evaluate
 model = torch.load('rnnlm')
 model.cuda()
 te_score, te_wps = model.run('te', Xte, Yte, args.batch_size)

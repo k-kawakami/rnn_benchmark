@@ -8,7 +8,8 @@ import torch
 from torch import nn
 from torch.autograd import Variable
 
-from utils import *
+from utils import ProgressBar
+
 
 class RNNLM(nn.Module):
 
@@ -19,7 +20,11 @@ class RNNLM(nn.Module):
         self.epoch = 0
         self.best_score = (0, float('inf'), float('inf'))
 
-        self.proj = nn.Embedding(vocab_size, emb_dim)
+        self.proj = nn.Sequential(
+                        nn.Embedding(vocab_size, emb_dim),
+                        nn.Dropout(dropout)
+                    )
+
         self.rnn = getattr(nn, rnn_type)(emb_dim,
                                          hid_dim,
                                          nlayers,
@@ -27,10 +32,13 @@ class RNNLM(nn.Module):
                                          bidirectional=False,
                                          dropout=dropout,
                                          batch_first=True)
-        self.logit = nn.Linear(hid_dim, vocab_size)
+        self.logit = nn.Sequential(
+                        nn.Dropout(dropout),
+                        nn.Linear(hid_dim, vocab_size)
+                        )
 
         if tied:
-            self.logit.weight = self.proj.weight
+            self.logit[1].weight = self.proj[0].weight
 
     def reset_states(self, batch_size):
         weight = next(self.parameters()).data
@@ -63,12 +71,13 @@ class RNNLM(nn.Module):
         x = self.logit(x.contiguous().view(x.size(0) * x.size(1), x.size(2)))
         return x
 
-    def run(self, mode, X, Y, batch_size, optimizer=None):
+    def run(self, mode, X, Y, batch_size, optimizer=None, clip=None):
         self.reset_states(batch_size)
         if optimizer:
-            self.train(True)    
+            self.train(True)
         else:
             self.eval()
+
         nbatches = X.size(0) // batch_size
 
         pb = ProgressBar(mode, self.epoch, nbatches)
@@ -85,20 +94,21 @@ class RNNLM(nn.Module):
             x = Variable(X[begin:end])
             t = Variable(Y[begin:end])
 
-            ### Start ###
+            # Start
             start = time.time()
             y = self(x)
             loss = L(y, t.view(-1))
 
             if optimizer:
+                if clip:
+                    torch.nn.utils.clip_grad_norm(self.parameters(), clip)
                 self.zero_grad()
                 loss.backward()
                 optimizer.step()
-            ###  End  ###
+            # End
             _total_time += time.time() - start
             _total_loss += loss.cpu().data.numpy()[0]
             _total_word += float(numpy.prod(Y[begin:end].size()))
-            
             pb.update([
                     ('ppl', numpy.exp(_total_loss / _total_word), lambda x: x),
                     ('wps', _total_word / _total_time, lambda x: x)
