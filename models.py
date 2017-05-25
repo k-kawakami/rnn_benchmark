@@ -91,11 +91,10 @@ class RNNLM(nn.Module):
             begin = index * batch_size
             end = begin + batch_size
 
-            x = Variable(X[begin:end])
-            t = Variable(Y[begin:end])
-
             # Start
             start = time.time()
+            x = Variable(X[begin:end])
+            t = Variable(Y[begin:end])
             y = self(x)
             loss = L(y, t.view(-1))
 
@@ -106,9 +105,10 @@ class RNNLM(nn.Module):
                 loss.backward()
                 optimizer.step()
             # End
-            _total_time += time.time() - start
+            time_per_batch = time.time() - start
+            _total_time += time_per_batch
             _total_loss += loss.cpu().data.numpy()[0]
-            _total_word += float(numpy.prod(Y[begin:end].size()))
+            _total_word += float(numpy.prod(t.size()))
             pb.update([
                     ('ppl', numpy.exp(_total_loss / _total_word), lambda x: x),
                     ('wps', _total_word / _total_time, lambda x: x)

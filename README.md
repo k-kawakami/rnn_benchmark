@@ -8,7 +8,7 @@ git clone https://github.com/k-kawakami/rnn_benchmark.git
 cd rnn_benchmark
 mkdir data
 bash download.sh
-CUDA_VISIBLE_DEVICES=0 python run.py -rnn LSTM -nlayers 1 -emb_dim 1024 -hid_dim 1024 -tied 0 -epochs 10 -optimizer Adam -lr 0.002 -dropout 0.5 -batch_size 128 -seq_len 128
+CUDA_VISIBLE_DEVICES=0 python run.py -rnn LSTM -nlayers 1 -emb_dim 1024 -hid_dim 1024 -tied 0 -epochs 10 -optimizer Adam -lr 0.0002 -dropout 0.5 -batch_size 128 -seq_len 128 -clip 0.1 -seed 1234
 ```
 
 ## Evaluation
@@ -25,15 +25,15 @@ The hyperparameters we used are the following. Note that I have removed gradient
 -nlayers 1
 -emb_dim 1024
 -hid_dim 1024
--tied 1
--epochs 100
+-tied 0
+-epochs 10
 -optimizer Adam
--lr 0.002
+-lr 0.0002
 -dropout 0.5
--batch_size 25
--seq_len 35
--clip 0.25
--seed 100 
+-batch_size 128
+-seq_len 128
+-clip 0.1
+-seed 1234
 ```
 
 ## Results

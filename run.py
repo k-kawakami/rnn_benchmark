@@ -24,7 +24,6 @@ print('CUDNN VERSION: {}'.format(torch.backends.cudnn.version()))
 print('Number CUDA Devices: {}'.format(torch.cuda.device_count()))
 print('Active CUDA Device: GPU: {}'.format(torch.cuda.current_device()))
 
-
 parser = argparse.ArgumentParser()
 parser.add_argument('-seed', type=int, default=1234)
 parser.add_argument('-tr', type=str,
@@ -60,9 +59,6 @@ Xtr, Ytr = corpus.load_data(args.tr, args.batch_size, args.seq_len)
 Xva, Yva = corpus.load_data(args.va, args.batch_size, args.seq_len)
 Xte, Yte = corpus.load_data(args.te, args.batch_size, args.seq_len)
 
-print Xtr.size()
-print Xva.size()
-
 # Model
 model = RNNLM(args.rnn,
               args.nlayers,
@@ -81,7 +77,6 @@ for epoch in range(args.epochs):
     tr_score, tr_wps = model.run('tr', Xtr, Ytr, args.batch_size,
                                  optimizer, args.clip)
     va_score, va_wps = model.run('va', Xva, Yva, args.batch_size)
-    te_score, te_wps = model.run('te', Xte, Yte, args.batch_size)
     tr_wps_record.append(tr_wps)
     va_wps_record.append(va_wps)
 
