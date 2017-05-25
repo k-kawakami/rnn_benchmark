@@ -18,7 +18,7 @@ The evaluations are done on a standard language modeling dataset, [Wikitext-2](h
 ## Model Configuration
 
 Since we are not trying to establish SoTA results, we used large minibatch size to consume large amount of GPU memory. 
-The hyperparameters we used are the following. Note that I have removed gradient clipping which introduce a large amount of overhead.
+The hyperparameters we used are the following.
 
 ```
 -rnn LSTM
@@ -55,8 +55,6 @@ We ran the model for 10 epochs and report the number of processed words per seco
 | Tesla P100-SXM2-16GB (DGX1) | 27508.843 |     266949.819     |
 | Tesla P100-PCIE-16GB        | 25386.440 |     246275.124     |
 | GeForce GTX TITAN X         | 15918.442 |     266936.834     |
-
-Note: You can get speed up by removing gradient clipping.
 
 ### 2-layer Deep LSTM with 512 hidden units for each layer
 
