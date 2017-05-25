@@ -18,7 +18,7 @@ assert torch.cuda.is_available(), 'CUDA is not available!'
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-seed', type=int, default=1234)
-parser.add_argument('-cudnn', type=bool, default=1)
+parser.add_argument('-cudnn', action='store_true', default=False)
 parser.add_argument('-tr', type=str,
                     default='data/wikitext-2/wiki.train.tokens')
 parser.add_argument('-va', type=str,
@@ -51,10 +51,11 @@ print('pyTorch VERSION: {}'.format(torch.__version__))
 print('CUDA VERSION: {}'.format(call(["nvcc", "--version"])))
 print('Number CUDA Devices: {}'.format(torch.cuda.device_count()))
 print('Active CUDA Device: GPU: {}'.format(torch.cuda.current_device()))
+
 if args.cudnn:
     print('CUDNN VERSION: {}'.format(torch.backends.cudnn.version()))
 else:
-    print('CUDNN Disabled')
+    print('**CUDNN is disabled. add -cudnn to use cudnn backend.')
 
 # Load data
 corpus = Corpus()
