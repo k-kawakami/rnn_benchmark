@@ -58,7 +58,7 @@ We ran the model for 10 epochs and report the number of processed words per seco
 
 ### 2-layer Deep LSTM with 512 hidden units for each layer
 
-CuDNN compute multi-layer LSTM in parallel to speed up.
+CuDNN compute multi-layer LSTM in parallel.
 
 We expected to get more improvements with cudnn on deep lstm case than single lstm case but that's not ture.
 
