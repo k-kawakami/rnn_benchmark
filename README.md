@@ -8,7 +8,7 @@ git clone https://github.com/k-kawakami/rnn_benchmark.git
 cd rnn_benchmark
 mkdir data
 bash download.sh
-CUDA_VISIBLE_DEVICES=0 python run.py -rnn LSTM -nlayers 1 -emb_dim 1024 -hid_dim 1024 -tied 0 -epochs 10 -optimizer Adam -lr 0.0002 -dropout 0.5 -batch_size 128 -seq_len 128 -clip 0.1 -seed 1234
+CUDA_VISIBLE_DEVICES=0 python run.py -rnn LSTM -nlayers 1 -emb_dim 1024 -hid_dim 1024 -tied 0 -epochs 10 -optimizer Adam -lr 0.0002 -dropout 0.5 -batch_size 128 -seq_len 128 -clip 0.1 -seed 1234 -cudnn
 ```
 
 ## Evaluation
@@ -34,22 +34,28 @@ The hyperparameters we used are the following. Note that I have removed gradient
 -seq_len 128
 -clip 0.1
 -seed 1234
+-cudnn
 ```
 
 ## Results
 
 We ran the model for 10 epochs and report the number of processed words per second (wps).
 
-- Machine: train wps / test wps [words/sec]
-- Tesla P100-SXM2-16GB (DGX1): Train 547,106.703 wps / Eval: 3,365,052.456 wps
-- Tesla P100-PCIE-16GB: Train 497,944.387 wps / Eval: 3,692,290.684 wps
-- GeForce GTX TITAN X: Train 354,534.268 wps / Eval: 4,399,055.094 wps
+| With CuDNN                  |   Train   | Test (no backprop) |
+|-----------------------------|:---------:|:------------------:|
+| Tesla P100-SXM2-16GB (DGX1) | 77979.075 |     3156347.897    |
+| Tesla P100-PCIE-16GB        | 72515.771 |     3543788.666    |
+| GeForce GTX TITAN X         | 43774.577 |     4225782.301    |
 
-Yeah... looks good. DGX1 is ~10% faster than P100.
 
-But wait. Why Titan X is the fastest for test time? 
+| Without CuDNN               |   Train   | Test (no backprop) |
+|-----------------------------|:---------:|:------------------:|
+| Tesla P100-SXM2-16GB (DGX1) | 27487.207 |     264753.456     |
+| Tesla P100-PCIE-16GB        | 25450.949 |     246675.091     |
+| GeForce GTX TITAN X         | 15609.678 |     260826.266     |
 
-CPU performance? Bugs?
+Note: You can get speed up by removing gradient clipping.
+
 
 ### Details
 
