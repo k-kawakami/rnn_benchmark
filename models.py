@@ -93,8 +93,12 @@ class RNNLM(nn.Module):
 
             # Start
             start = time.time()
-            x = Variable(X[begin:end])
-            t = Variable(Y[begin:end])
+            if optimizer:
+                x = Variable(X[begin:end], requires_grad=False)
+                t = Variable(Y[begin:end], requires_grad=False)
+            else:
+                x = Variable(X[begin:end], requires_grad=False, volatile=True)
+                t = Variable(Y[begin:end], requires_grad=False, volatile=True)
             y = self(x)
             loss = L(y, t.view(-1))
 
