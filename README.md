@@ -16,6 +16,14 @@ Thank you very much for running experiments!
 
 Please provide deviceQuery information and cpuinfo of your machine below.
 
+``` cupinfo
+cat /proc/cpuinfo
+```
+
+``` deviceQuery
+/usr/local/cuda-8.0/samples/1_Utilities/deviceQuery/deviceQuery
+```
+
 
 ## Evaluation
 
