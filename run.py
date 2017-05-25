@@ -9,23 +9,16 @@ from subprocess import call
 
 import torch
 from torch import optim
-import torch.backends.cudnn as cudnn
 
 from models import RNNLM
 from utils import Corpus
 
-cudnn.benchmark = True
 assert torch.cuda.is_available(), 'CUDA is not available!'
 
-print('Python VERSION: {}'.format(sys.version))
-print('pyTorch VERSION: {}'.format(torch.__version__))
-print('CUDA VERSION: {}'.format(call(["nvcc", "--version"])))
-print('CUDNN VERSION: {}'.format(torch.backends.cudnn.version()))
-print('Number CUDA Devices: {}'.format(torch.cuda.device_count()))
-print('Active CUDA Device: GPU: {}'.format(torch.cuda.current_device()))
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-seed', type=int, default=1234)
+parser.add_argument('-cudnn', type=bool, default=1)
 parser.add_argument('-tr', type=str,
                     default='data/wikitext-2/wiki.train.tokens')
 parser.add_argument('-va', type=str,
@@ -51,6 +44,17 @@ args = parser.parse_args()
 
 torch.manual_seed(args.seed)
 torch.cuda.manual_seed(args.seed)
+torch.backends.cudnn.enabled = args.cudnn
+
+print('Python VERSION: {}'.format(sys.version))
+print('pyTorch VERSION: {}'.format(torch.__version__))
+print('CUDA VERSION: {}'.format(call(["nvcc", "--version"])))
+print('Number CUDA Devices: {}'.format(torch.cuda.device_count()))
+print('Active CUDA Device: GPU: {}'.format(torch.cuda.current_device()))
+if args.cudnn:
+    print('CUDNN VERSION: {}'.format(torch.backends.cudnn.version()))
+else:
+    print('CUDNN Disabled')
 
 # Load data
 corpus = Corpus()
