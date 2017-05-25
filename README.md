@@ -1,7 +1,6 @@
 # rnn_benchmark
 
-This is a GPU speed test with language model.
-All the experiments were done with Pytorch & cudnn backend.
+This is a GPU speed test with language modeling.
 
 ```
 git clone https://github.com/k-kawakami/rnn_benchmark.git
@@ -10,6 +9,7 @@ mkdir data
 bash download.sh
 CUDA_VISIBLE_DEVICES=0 python run.py -rnn LSTM -nlayers 1 -emb_dim 1024 -hid_dim 1024 -tied 0 -epochs 10 -optimizer Adam -lr 0.0002 -dropout 0.5 -batch_size 128 -seq_len 128 -clip 0.1 -seed 1234 -cudnn
 ```
+
 
 ## Evaluation
 
@@ -39,25 +39,49 @@ The hyperparameters we used are the following. Note that I have removed gradient
 
 ## Results
 
+### Single layer LSTM with 1024 hidden units
+
 We ran the model for 10 epochs and report the number of processed words per second (wps).
 
 | With CuDNN                  |   Train   | Test (no backprop) |
 |-----------------------------|:---------:|:------------------:|
-| Tesla P100-SXM2-16GB (DGX1) | 77979.075 |     3156347.897    |
-| Tesla P100-PCIE-16GB        | 72515.771 |     3543788.666    |
+| Tesla P100-SXM2-16GB (DGX1) | 78386.382 |     3111193.054    |
+| Tesla P100-PCIE-16GB        | 72493.573 |     3464339.564    |
 | GeForce GTX TITAN X         | 43774.577 |     4225782.301    |
 
 
 | Without CuDNN               |   Train   | Test (no backprop) |
 |-----------------------------|:---------:|:------------------:|
-| Tesla P100-SXM2-16GB (DGX1) | 27487.207 |     264753.456     |
-| Tesla P100-PCIE-16GB        | 25450.949 |     246675.091     |
-| GeForce GTX TITAN X         | 15609.678 |     260826.266     |
+| Tesla P100-SXM2-16GB (DGX1) | 27508.843 |     266949.819     |
+| Tesla P100-PCIE-16GB        | 25386.440 |     246275.124     |
+| GeForce GTX TITAN X         | 15918.442 |     266936.834     |
 
 Note: You can get speed up by removing gradient clipping.
 
+### 2-layer Deep LSTM with 512 hidden units for each layer
 
-### Details
+CuDNN compute multi-layer LSTM in parallel to speed up.
+
+We expected to get more improvements with cudnn on deep lstm case than single lstm case but that's not ture.
+
+Computations in embedding and softmax might have different effects.
+
+
+| With CuDNN                  |   Train   | Test (no backprop) |
+|-----------------------------|:---------:|:------------------:|
+| Tesla P100-SXM2-16GB (DGX1) | 53824.334 |     1778586.693    |
+| Tesla P100-PCIE-16GB        | 49397.225 |     1875395.719    |
+| GeForce GTX TITAN X         | 32534.504 |     2559483.339    |
+
+
+| Without CuDNN               |   Train   | Test (no backprop) |
+|-----------------------------|:---------:|:------------------:|
+| Tesla P100-SXM2-16GB (DGX1) | 37693.830 |     326144.706     |
+| Tesla P100-PCIE-16GB        | 34889.013 |     299286.352     |
+| GeForce GTX TITAN X         | 22443.046 |     332199.661     |
+
+
+## Details
 
 - DGX1
 ```
@@ -115,3 +139,7 @@ Active CUDA Device: GPU: 0
 
 CPU: Intel(R) Xeon(R) CPU E5-2630 v3 @ 2.40GHz
 ```
+
+## Acknowledgements
+
+Thanks [Guillaume Lample](https://github.com/glample) and [Sandeep Subramanian](https://github.com/MaximumEntropy) for valuable comments! They also have nice rnn-benchmarks.
