@@ -51,6 +51,14 @@ The hyperparameters we used are the following.
 -cudnn
 ```
 
+To achieve the state-of-the-art performance, you need to tune parameters. 
+
+For example, this parameter will give 94.614 on test set.
+
+```
+python run.py -rnn LSTM -nlayers 1 -emb_dim 1024 -hid_dim 1024 -tied 1 -epochs 1000 -optimizer Adam -lr 0.0002 -dropout 0.5 -batch_size 20 -seq_len 32 -clip 0.1 -seed 100
+```
+
 ## Results
 
 ### Single layer LSTM with 1024 hidden units
