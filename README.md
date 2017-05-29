@@ -16,6 +16,14 @@ Thank you very much for running experiments!
 
 Please provide deviceQuery information and cpuinfo of your machine below.
 
+``` operating system
+cat /proc/version 
+```
+
+```  scaling_governor
+cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+```
+
 ``` cupinfo
 cat /proc/cpuinfo
 ```
@@ -105,6 +113,10 @@ Computations in embedding and softmax might have different effects.
 
 - DGX1
 ```
+OS: Linux version 4.4.0-45-generic (buildd@lcy01-08) (gcc version 4.8.4 (Ubuntu 4.8.4-2ubuntu1~14.04.3) ) #66~14.04.1-Ubuntu SMP Wed Oct 19 15:05:38 UTC 2016
+
+Scaling Governor: performance
+
 GPU: Tesla P100-SXM2-16GB, 375.20, 16308 MiB
 Device 7: "Tesla P100-SXM2-16GB"
   CUDA Driver Version / Runtime Version          8.0 / 8.0
@@ -156,6 +168,10 @@ CPU: Intel(R) Xeon(R) CPU E5-2698 v4 @ 2.20GHz
 
 - P100
 ```
+OS: Linux version 3.10.0-514.el7.x86_64 (builder@kbuilder.dev.centos.org) (gcc version 4.8.5 20150623 (Red Hat 4.8.5-11) (GCC) ) #1 SMP Tue Nov 22 16:42:41 UTC 2016
+
+Scaling Governor: No
+
 GPU: Tesla P100-PCIE-16GB, 367.48, 16276 MiB
 Device 1: "Tesla P100-PCIE-16GB"
   CUDA Driver Version / Runtime Version          8.0 / 8.0
@@ -207,6 +223,10 @@ CPU: Intel(R) Xeon(R) CPU E5-2690 v4 @ 2.60GHz
 
 - Titan X
 ```
+OS: Linux version 4.2.0-27-generic (buildd@lcy01-23) (gcc version 4.8.2 (Ubuntu 4.8.2-19ubuntu1) ) #32~14.04.1-Ubuntu SMP Fri Jan 22 15:32:26 UTC 2016
+
+Scaling Governor: powersave
+
 GPU: GeForce GTX TITAN X, 352.79, 12287 MiB
 Device 0: "GeForce GTX TITAN X"
   CUDA Driver Version / Runtime Version          7.5 / 7.5
